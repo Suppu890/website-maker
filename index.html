@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suppu Creator — Master Website Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- JSZip Engine for processing direct uncompressed local archive streams -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            builder: {
-              bg: '#0f172a',
-              sidebar: '#1e293b',
-              panel: '#334155',
+            workspace: {
+              bg: '#09090b',
+              sidebar: '#141416',
+              editor: '#18181b',
+              border: '#27272a',
               accent: '#3b82f6'
             }
           }
@@ -25,219 +25,91 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
     .code-font { font-family: 'Fira Code', monospace; }
-    .hidden-panel { display: none !important; }
+    .hidden-layer { display: none !important; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #141416; }
+    ::-webkit-scrollbar-thumb { background: #2d2d30; border-radius: 4px; }
   </style>
 </head>
-<body class="bg-builder-bg text-slate-200 min-h-screen flex flex-col overflow-hidden">
+<body class="bg-workspace-bg text-zinc-300 antialiased min-h-screen flex flex-col overflow-hidden">
 
-  <!-- SECURITY GATEWAY (LOCK SCREEN) -->
-  <div id="loginGate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 px-4">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_60%)]"></div>
-    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 relative z-10">
+  <div id="loginGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black px-4">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.06),transparent_60%)]"></div>
+    <div class="w-full max-w-md bg-zinc-900 border border-workspace-border rounded-2xl shadow-2xl p-8 relative z-10">
       <div class="text-center mb-6">
-        <h2 class="text-3xl font-extrabold tracking-tight text-white">Suppu Creator<span class="text-builder-accent">.</span></h2>
-        <p class="text-slate-500 text-xs uppercase tracking-widest font-semibold mt-1">Private Website Builder</p>
+        <h2 class="text-3xl font-black tracking-tight text-white">Suppu Creator<span class="text-workspace-accent">.</span></h2>
+        <p class="text-zinc-500 text-xs uppercase tracking-widest font-semibold mt-1">AI Web Generation Matrix</p>
       </div>
-      <form id="loginForm" class="space-y-4">
+      <form id="masterLoginForm" class="space-y-4">
         <div class="space-y-1">
-          <label class="text-xs font-medium text-slate-400">Username Identifier</label>
-          <input type="text" id="suppuUser" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white outline-none focus:border-builder-accent transition-all" placeholder="admin" required />
+          <label class="text-xs font-medium text-zinc-400">Identity Token Profile</label>
+          <input type="text" id="suppuUser" class="w-full bg-zinc-950 border border-workspace-border rounded-xl p-3 text-sm text-white outline-none focus:border-workspace-accent transition-all" placeholder="username" required />
         </div>
         <div class="space-y-1">
-          <label class="text-xs font-medium text-slate-400">Security Password</label>
-          <input type="password" id="suppuPass" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white outline-none focus:border-builder-accent transition-all" placeholder="••••••••" required />
+          <label class="text-xs font-medium text-zinc-400">Security Access Code</label>
+          <input type="password" id="suppuPass" class="w-full bg-zinc-950 border border-workspace-border rounded-xl p-3 text-sm text-white outline-none focus:border-workspace-accent transition-all" placeholder="••••••••" required />
         </div>
-        <p id="accessErr" class="text-red-500 text-xs font-medium hidden">❌ Invalid authentication parameters.</p>
-        <button type="submit" class="w-full bg-builder-accent hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-500/20">Mount Builder Panel</button>
+        <p id="accessErr" class="text-red-500 text-xs font-medium hidden-layer">❌ Verification credentials rejected.</p>
+        <button type="submit" class="w-full bg-workspace-accent hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-500/10">Authorize Terminal</button>
       </form>
     </div>
   </div>
 
-  <!-- MASTER WORKSPACE VIEWPORT -->
-  <div id="builderWorkspace" class="hidden-panel flex-1 flex flex-col h-screen">
+  <div id="masterWorkspace" class="hidden-layer flex-1 flex flex-col h-screen">
     
-    <!-- HEADER APP BAR -->
-    <header class="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
+    <header class="h-14 bg-workspace-sidebar border-b border-workspace-border flex items-center justify-between px-6 shrink-0">
       <div class="flex items-center gap-3">
-        <span class="font-extrabold text-xl text-white tracking-tight">Suppu Creator Engine</span>
-        <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-mono border border-blue-500/20">PRO-V2</span>
+        <div class="w-2.5 h-2.5 bg-workspace-accent rounded-full animate-pulse"></div>
+        <span class="font-black text-xl text-white tracking-tight">Suppu Creator <span class="text-xs font-mono text-zinc-500 font-normal">v3.0-STABLE</span></span>
       </div>
-      <div class="flex gap-2">
-        <button id="runPreviewBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all">⚡ Run Code</button>
-        <button id="exportZipBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all">📥 Export ZIP Folder</button>
+      <div class="flex items-center gap-3">
+        <button id="compilePreviewBtn" class="bg-workspace-accent hover:bg-blue-600 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95">⚡ Run Blueprint</button>
+        <button id="triggerZipExportBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95">📥 Export Project ZIP</button>
       </div>
     </header>
 
-    <!-- CORE FLEX CONTAINER -->
     <div class="flex-1 flex overflow-hidden">
       
-      <!-- LEFT MODULE: SITE CUSTOMIZER CONTROLS -->
-      <aside class="w-80 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 overflow-y-auto p-5 space-y-5">
+      <aside class="w-80 bg-workspace-sidebar border-r border-workspace-border flex flex-col shrink-0 overflow-y-auto p-5 space-y-5">
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Website Blueprint</h3>
-          <div class="space-y-3 text-xs">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Generation Specifications</h3>
+          <div class="space-y-4 text-xs">
             <div class="space-y-1">
-              <label class="text-slate-400 font-medium">Project / App Name</label>
-              <input type="text" id="siteName" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white outline-none focus:border-builder-accent" value="SaaSify" />
+              <label class="text-zinc-400 font-medium">Website/App Title</label>
+              <input type="text" id="blueprintName" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent" value="SaaSify" />
             </div>
             <div class="space-y-1">
-              <label class="text-slate-400 font-medium">Hero Section Tagline</label>
-              <input type="text" id="siteTagline" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white outline-none focus:border-builder-accent" value="Supercharge your workflow today." />
+              <label class="text-zinc-400 font-medium">Hero Core Headline</label>
+              <input type="text" id="blueprintHeadline" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent" value="Supercharge your workflow today." />
             </div>
             <div class="space-y-1">
-              <label class="text-slate-400 font-medium">Primary Accent Color (Hex)</label>
-              <input type="text" id="siteColor" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white outline-none focus:border-builder-accent" value="#8b5cf6" />
+              <label class="text-zinc-400 font-medium">Visual Accent Color (Hex)</label>
+              <input type="text" id="blueprintColor" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent" value="#8b5cf6" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-zinc-400 font-medium">Layout Template Archetype</label>
+              <select id="blueprintTemplate" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent cursor-pointer">
+                <option value="saas">Modern SaaS Landing Page</option>
+                <option value="portfolio">Minimal Developer Portfolio</option>
+                <option value="business">Corporate Showcase Template</option>
+              </select>
             </div>
           </div>
         </div>
         
-        <button id="generateCodeBtn" class="w-full bg-slate-800 hover:bg-zinc-700 border border-zinc-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all mt-4">
-          ✨ Generate Source Code
+        <button id="generatePayloadBtn" class="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white py-3 rounded-xl text-xs font-bold transition-all tracking-wide shadow-md">
+          ✨ Re-Compile Source Pipeline
         </button>
       </aside>
 
-      <!-- CENTER MODULE: MONITOR INTERFACE CODE TABS -->
-      <section class="flex-1 flex flex-col bg-slate-950 overflow-hidden">
-        <div class="h-9 bg-slate-900/60 border-b border-slate-800 flex items-center text-xs">
-          <button id="tabHTML" class="h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500">index.html</button>
-          <button id="tabCSS" class="h-full px-4 border-r border-slate-800 text-slate-500">style.css</button>
-          <button id="tabJS" class="h-full px-4 border-r border-slate-800 text-slate-500">script.js</button>
+      <section class="flex-1 flex flex-col bg-workspace-editor overflow-hidden">
+        <div class="h-9 bg-zinc-950 border-b border-workspace-border flex items-center text-xs">
+          <button id="tabButtonHTML" class="h-full px-5 border-r border-workspace-border text-workspace-accent font-bold bg-workspace-editor border-t-2 border-t-workspace-accent">index.html</button>
+          <button id="tabButtonCSS" class="h-full px-5 border-r border-workspace-border text-zinc-500 font-medium">style.css</button>
+          <button id="tabButtonJS" class="h-full px-5 border-r border-workspace-border text-zinc-500 font-medium">script.js</button>
         </div>
-        <div class="flex-1 p-2 bg-slate-900/40 relative">
-          <textarea id="editorEngine" class="w-full h-full bg-transparent code-font p-4 text-xs text-slate-100 outline-none resize-none leading-5"></textarea>
-        </div>
-      </section>
-
-      <!-- RIGHT MODULE: ISOLATED RUNTIME RUN TARGETS -->
-      <section class="w-[450px] lg:w-[550px] bg-slate-900 border-l border-slate-800 flex flex-col shrink-0 overflow-hidden">
-        <div class="h-8 bg-slate-950 flex items-center px-4 gap-1.5 shrink-0 border-b border-slate-800">
-          <span class="w-2.5 h-2.5 bg-red-500/40 rounded-full"></span>
-          <span class="w-2.5 h-2.5 bg-yellow-500/40 rounded-full"></span>
-          <span class="w-2.5 h-2.5 bg-green-500/40 rounded-full"></span>
-          <div class="flex-1 bg-slate-900 mx-4 rounded text-[10px] px-3 text-slate-500 border border-slate-800 py-0.5 truncate">https://suppu-sandbox.local/</div>
-        </div>
-        <iframe id="sandboxFrame" class="w-full flex-1 bg-white border-none"></iframe>
-      </section>
-
-    </div>
-  </div>
-
-  <!-- SCRIPT PIPELINES MATRIX -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      
-      let activeTab = 'html';
-      let sourceFiles = { html: '', css: '', js: '' };
-
-      // Bind Login Events securely via EventListeners
-      const loginForm = document.getElementById('loginForm');
-      if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const u = document.getElementById('suppuUser').value.trim();
-          const p = document.getElementById('suppuPass').value;
-
-          if (u === 'admin' && p === 'suppubuilder2026') {
-            sessionStorage.setItem('suppuBuilderSession', 'authenticated');
-            bootBuilderLayout();
-          } else {
-            const err = document.getElementById('accessErr');
-            if (err) err.classList.remove('hidden');
-          }
-        });
-      }
-
-      function bootBuilderLayout() {
-        document.getElementById('loginGate')?.classList.add('hidden-panel');
-        document.getElementById('builderWorkspace')?.classList.remove('hidden-panel');
-        generateAutomatedWebsite();
-      }
-
-      function generateAutomatedWebsite() {
-        const name = document.getElementById('siteName').value.trim() || 'SaaSify';
-        const tagline = document.getElementById('siteTagline').value.trim() || 'Supercharge your workflow today.';
-        const color = document.getElementById('siteColor').value.trim() || '#8b5cf6';
-
-        sourceFiles.html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>` + name + `</title>\n<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="container">\n  <nav>\n    <a href="#" class="logo">\n      <span style="display: inline-block; width: 16px; height: 16px; background: ` + color + `; border-radius: 4px; margin-right: 8px;"></span>\n      ` + name + `\n    </a>\n    <div style="display:flex; gap:24px; align-items:center;">\n      <a href="#" class="btn">Get Started</a>\n    </div>\n  </nav>\n</div>\n\n<section class="hero">\n  <div class="container">\n    <span class="badge">✨ Introducing ` + name + ` 2.0</span>\n    <h1>` + tagline + `</h1>\n    <p class="desc">The all-in-one platform built to help modern teams ship faster, collaborate better, and scale seamlessly.</p>\n    <button class="btn" id="actionButton">Test Interactive Script</button>\n  </div>\n</section>\n\n<script src="script.js"><\/script>\n</body>\n</html>`;
-
-        sourceFiles.css = `:root {\n  --primary: ` + color + `;\n  --text: #0f172a;\n  --muted: #64748b;\n}\nbody {\n  font-family: "Plus Jakarta Sans", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }\n.logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--text); display: flex; align-items: center; }\n.hero { padding: 100px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--primary); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }\nh1 { font-size: 56px; max-width: 750px; margin: 0 auto 20px; line-height: 1.15; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--muted); max-width: 550px; margin: 0 auto 30px; }\n.btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }`;
-
-        sourceFiles.js = `// Generated Interactive Middleware Scripts\ndocument.addEventListener("DOMContentLoaded", function() {\n  console.log("Interactive runtime frame loaded correctly.");\n  \n  document.getElementById("actionButton")?.addEventListener("click", () => {\n    alert("Hello! Custom script trigger executed from the Suppu Playground!");\n  });\n});`;
-
-        const txt = document.getElementById('editorEngine');
-        if (txt) txt.value = sourceFiles[activeTab];
-        runLivePreview();
-      }
-
-      function switchCodeTab(target) {
-        document.getElementById('tabHTML').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
-        document.getElementById('tabCSS').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
-        document.getElementById('tabJS').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
-
-        activeTab = target;
-        
-        const activeBtn = document.getElementById('tab' + target.toUpperCase());
-        if (activeBtn) {
-          activeBtn.className = 'h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500';
-        }
-
-        const txt = document.getElementById('editorEngine');
-        if (txt) txt.value = sourceFiles[activeTab];
-      }
-
-      function runLivePreview() {
-        const frame = document.getElementById('sandboxFrame');
-        if(!frame) return;
-
-        let htmlCode = sourceFiles.html;
-        const cssCode = sourceFiles.css;
-        const jsCode = sourceFiles.js;
-
-        htmlCode = htmlCode.replace(/<link\s+rel=['"]stylesheet['"]\s+href=['"]style\.css['"]\s*\/?>/i, `<style>${cssCode}</style>`);
-        htmlCode = htmlCode.replace(/<script\s+src=['"]script\.js['"]><\/script>/i, `<script>${jsCode}<\/script>`);
-
-        frame.srcdoc = htmlCode;
-      }
-
-      // Bind UI Control Panel actions safely
-      document.getElementById('generateCodeBtn')?.addEventListener('click', generateAutomatedWebsite);
-      document.getElementById('runPreviewBtn')?.addEventListener('click', runLivePreview);
-      
-      document.getElementById('tabHTML')?.addEventListener('click', () => switchCodeTab('html'));
-      document.getElementById('tabCSS')?.addEventListener('click', () => switchCodeTab('css'));
-      document.getElementById('tabJS')?.addEventListener('click', () => switchCodeTab('js'));
-
-      document.getElementById('editorEngine')?.addEventListener('input', (e) => {
-        sourceFiles[activeTab] = e.target.value;
-      });
-
-      document.getElementById('exportZipBtn')?.addEventListener('click', () => {
-        if(typeof JSZip === 'undefined') {
-          alert("Compression module initialization delay. Please click again.");
-          return;
-        }
-        const zip = new JSZip();
-        zip.file("index.html", sourceFiles.html);
-        zip.file("style.css", sourceFiles.css);
-        zip.file("script.js", sourceFiles.js);
-
-        zip.generateAsync({ type: "blob" }).then((content) => {
-          const dlLink = document.createElement('a');
-          dlLink.href = URL.createObjectURL(content);
-          dlLink.download = "suppu_generated_site.zip";
-          dlLink.click();
-        });
-      });
-
-      // Persistent authorization check
-      if(sessionStorage.getItem('suppuBuilderSession') === 'authenticated') {
-        bootBuilderLayout();
-      }
-    });
-  </script>
-</body>
-</html>
+        <div class="flex-1 p-3 bg-zinc-9
