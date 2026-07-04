@@ -40,7 +40,7 @@
         <h2 class="text-3xl font-extrabold tracking-tight text-white">Suppu Creator<span class="text-builder-accent">.</span></h2>
         <p class="text-slate-500 text-xs uppercase tracking-widest font-semibold mt-1">Private Website Builder</p>
       </div>
-      <form onsubmit="verifyAccess(event)" class="space-y-4">
+      <form id="loginForm" class="space-y-4">
         <div class="space-y-1">
           <label class="text-xs font-medium text-slate-400">Username Identifier</label>
           <input type="text" id="suppuUser" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white outline-none focus:border-builder-accent transition-all" placeholder="admin" required />
@@ -49,7 +49,7 @@
           <label class="text-xs font-medium text-slate-400">Security Password</label>
           <input type="password" id="suppuPass" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white outline-none focus:border-builder-accent transition-all" placeholder="••••••••" required />
         </div>
-        <p id="accessErr" class="text-red-500 text-xs font-medium hidden">❌ Invalid access configurations.</p>
+        <p id="accessErr" class="text-red-500 text-xs font-medium hidden">❌ Invalid authentication parameters.</p>
         <button type="submit" class="w-full bg-builder-accent hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-500/20">Mount Builder Panel</button>
       </form>
     </div>
@@ -63,8 +63,8 @@
         <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-mono border border-blue-500/20">PRO-V2</span>
       </div>
       <div class="flex gap-2">
-        <button onclick="runLivePreview()" class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all">⚡ Run Code</button>
-        <button onclick="exportProjectZip()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all">📥 Export ZIP Folder</button>
+        <button id="runPreviewBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all">⚡ Run Code</button>
+        <button id="exportZipBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all">📥 Export ZIP Folder</button>
       </div>
     </header>
 
@@ -89,19 +89,19 @@
           </div>
         </div>
         
-        <button onclick="generateAutomatedWebsite()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all mt-4">
+        <button id="generateCodeBtn" class="w-full bg-slate-800 hover:bg-zinc-700 border border-zinc-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all mt-4">
           ✨ Generate Source Code
         </button>
       </aside>
 
       <section class="flex-1 flex flex-col bg-slate-950 overflow-hidden">
         <div class="h-9 bg-slate-900/60 border-b border-slate-800 flex items-center text-xs">
-          <button id="tabHTML" onclick="switchCodeTab('html')" class="h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500">index.html</button>
-          <button id="tabCSS" onclick="switchCodeTab('css')" class="h-full px-4 border-r border-slate-800 text-slate-500">style.css</button>
-          <button id="tabJS" onclick="switchCodeTab('js')" class="h-full px-4 border-r border-slate-800 text-slate-500">script.js</button>
+          <button id="tabHTML" class="h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500">index.html</button>
+          <button id="tabCSS" class="h-full px-4 border-r border-slate-800 text-slate-500">style.css</button>
+          <button id="tabJS" class="h-full px-4 border-r border-slate-800 text-slate-500">script.js</button>
         </div>
         <div class="flex-1 p-2 bg-slate-900/40 relative">
-          <textarea id="editorEngine" class="w-full h-full bg-transparent code-font p-4 text-xs text-slate-100 outline-none resize-none leading-5" oninput="updateActiveTabBuffer()"></textarea>
+          <textarea id="editorEngine" class="w-full h-full bg-transparent code-font p-4 text-xs text-slate-100 outline-none resize-none leading-5"></textarea>
         </div>
       </section>
 
@@ -119,110 +119,91 @@
   </div>
 
   <script>
-    // In-memory file system buffers
-    let activeTab = 'html';
-    let sourceFiles = {
-      html: '',
-      css: '',
-      js: ''
-    };
-
-    function verifyAccess(e) {
-      e.preventDefault();
-      const u = document.getElementById('suppuUser').value.trim();
-      const p = document.getElementById('suppuPass').value;
-
-      if (u === 'admin' && p === 'suppubuilder2026') {
-        sessionStorage.setItem('suppuBuilderSession', 'authenticated');
-        bootBuilderLayout();
-      } else {
-        document.getElementById('accessErr').classList.remove('hidden');
-      }
-    }
-
-    function bootBuilderLayout() {
-      document.getElementById('loginGate').classList.add('hidden-panel');
-      document.getElementById('builderWorkspace').classList.remove('hidden-panel');
+    document.addEventListener('DOMContentLoaded', () => {
       
-      // Auto build first mock initialization
-      generateAutomatedWebsite();
-    }
+      let activeTab = 'html';
+      let sourceFiles = { html: '', css: '', js: '' };
 
-    function generateAutomatedWebsite() {
-      const name = document.getElementById('siteName').value.trim() || 'SaaSify';
-      const tagline = document.getElementById('siteTagline').value.trim() || 'Supercharge your workflow today.';
-      const color = document.getElementById('siteColor').value.trim() || '#8b5cf6';
+      // Bind Login Events securely via EventListeners
+      const loginForm = document.getElementById('loginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const u = document.getElementById('suppuUser').value.trim();
+          const p = document.getElementById('suppuPass').value;
 
-      sourceFiles.html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>${name}</title>\n<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="container">\n  <nav>\n    <a href="#" class="logo">${name}</a>\n    <div style="display:flex; gap:24px; align-items:center;">\n      <a href="#" class="btn">Get Started</a>\n    </div>\n  </nav>\n</div>\n\n<section class="hero">\n  <div class="container">\n    <span class="badge">✨ Introducing ${name} 2.0</span>\n    <h1>${tagline}</h1>\n    <p class="desc">The all-in-one platform built to help modern teams ship faster, collaborate better, and scale seamlessly.</p>\n    <button class="btn" id="actionButton">Test Interactive Script</button>\n  </div>\n</section>\n\n<script src="script.js"><\/script>\n</body>\n</html>`;
-
-      sourceFiles.css = `:root {\n  --primary: ${color};\n  --text: #0f172a;\n  --muted: #64748b;\n}\nbody {\n  font-family: "Plus Jakarta Sans", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }\n.logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--text); }\n.hero { padding: 100px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--primary); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }\nh1 { font-size: 56px; max-width: 750px; margin: 0 auto 20px; line-height: 1.15; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--muted); max-width: 550px; margin: 0 auto 30px; }\n.btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }`;
-
-      sourceFiles.js = `// Generated Interactive Middleware Scripts\ndocument.addEventListener("DOMContentLoaded", function() {\n  console.log("Interactive runtime frame loaded correctly.");\n  \n  document.getElementById("actionButton")?.addEventListener("click", () => {\n    alert("Hello! Custom script trigger executed from the Suppu Playground!");\n  });\n});`;
-
-      // Update text buffer viewports
-      document.getElementById('editorEngine').value = sourceFiles[activeTab];
-      runLivePreview();
-    }
-
-    function switchCodeTab(target) {
-      // Un-highlight old tab
-      document.getElementById('tabHTML').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
-      document.getElementById('tabCSS').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
-      document.getElementById('tabJS').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
-
-      activeTab = target;
-      
-      // Highlight current target tab selection
-      const activeBtn = document.getElementById('tab' + target.toUpperCase());
-      activeBtn.className = 'h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500';
-
-      document.getElementById('editorEngine').value = sourceFiles[activeTab];
-    }
-
-    function updateActiveTabBuffer() {
-      sourceFiles[activeTab] = document.getElementById('editorEngine').value;
-    }
-
-    function runLivePreview() {
-      const frame = document.getElementById('sandboxFrame');
-      if(!frame) return;
-
-      let htmlCode = sourceFiles.html;
-      const cssCode = sourceFiles.css;
-      const jsCode = sourceFiles.js;
-
-      // Inline resource compilation mappings
-      htmlCode = htmlCode.replace(/<link\s+rel=['"]stylesheet['"]\s+href=['"]style\.css['"]\s*\/?>/i, `<style>${cssCode}</style>`);
-      htmlCode = htmlCode.replace(/<script\s+src=['"]script\.js['"]><\/script>/i, `<script>${jsCode}<\/script>`);
-
-      frame.srcdoc = htmlCode;
-    }
-
-    function exportProjectZip() {
-      if(typeof JSZip === 'undefined') {
-        alert("Packaging modules loading. Please attempt download again in 2 seconds.");
-        return;
+          if (u === 'admin' && p === 'suppubuilder2026') {
+            sessionStorage.setItem('suppuBuilderSession', 'authenticated');
+            bootBuilderLayout();
+          } else {
+            const err = document.getElementById('accessErr');
+            if (err) err.classList.remove('hidden');
+          }
+        });
       }
 
-      const zip = new JSZip();
-      zip.file("index.html", sourceFiles.html);
-      zip.file("style.css", sourceFiles.css);
-      zip.file("script.js", sourceFiles.js);
+      function bootBuilderLayout() {
+        document.getElementById('loginGate')?.classList.add('hidden-panel');
+        document.getElementById('builderWorkspace')?.classList.remove('hidden-panel');
+        generateAutomatedWebsite();
+      }
 
-      zip.generateAsync({ type: "blob" }).then(function(content) {
-        const dlLink = document.createElement('a');
-        dlLink.href = URL.createObjectURL(content);
-        dlLink.download = "suppu_generated_site.zip";
-        dlLink.click();
-      }).catch(function(err) {
-        alert("Exception processing packaging layers.");
+      function generateAutomatedWebsite() {
+        const name = document.getElementById('siteName').value.trim() || 'SaaSify';
+        const tagline = document.getElementById('siteTagline').value.trim() || 'Supercharge your workflow today.';
+        const color = document.getElementById('siteColor').value.trim() || '#8b5cf6';
+
+        sourceFiles.html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>${name}</title>\n<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="container">\n  <nav>\n    <a href="#" class="logo">${name}</a>\n    <div style="display:flex; gap:24px; align-items:center;">\n      <a href="#" class="btn">Get Started</a>\n    </div>\n  </nav>\n</div>\n\n<section class="hero">\n  <div class="container">\n    <span class="badge">✨ Introducing ${name} 2.0</span>\n    <h1>${tagline}</h1>\n    <p class="desc">The all-in-one platform built to help modern teams ship faster, collaborate better, and scale seamlessly.</p>\n    <button class="btn" id="actionButton">Test Interactive Script</button>\n  </div>\n</section>\n\n<script src="script.js"><\/script>\n</body>\n</html>`;
+
+        sourceFiles.css = `:root {\n  --primary: ${color};\n  --text: #0f172a;\n  --muted: #64748b;\n}\nbody {\n  font-family: "Plus Jakarta Sans", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }\n.logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--text); }\n.hero { padding: 100px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--primary); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }\nh1 { font-size: 56px; max-width: 750px; margin: 0 auto 20px; line-height: 1.15; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--muted); max-width: 550px; margin: 0 auto 30px; }\n.btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }`;
+
+        sourceFiles.js = `// Generated Interactive Middleware Scripts\ndocument.addEventListener("DOMContentLoaded", function() {\n  console.log("Interactive runtime frame loaded correctly.");\n  \n  document.getElementById("actionButton")?.addEventListener("click", () => {\n    alert("Hello! Custom script trigger executed from the Suppu Playground!");\n  });\n});`;
+
+        const txt = document.getElementById('editorEngine');
+        if (txt) txt.value = sourceFiles[activeTab];
+        runLivePreview();
+      }
+
+      function switchCodeTab(target) {
+        document.getElementById('tabHTML').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
+        document.getElementById('tabCSS').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
+        document.getElementById('tabJS').className = 'h-full px-4 border-r border-slate-800 text-slate-500';
+
+        activeTab = target;
+        
+        const activeBtn = document.getElementById('tab' + target.toUpperCase());
+        if (activeBtn) {
+          activeBtn.className = 'h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500';
+        }
+
+        const txt = document.getElementById('editorEngine');
+        if (txt) txt.value = sourceFiles[activeTab];
+      }
+
+      function runLivePreview() {
+        const frame = document.getElementById('sandboxFrame');
+        if(!frame) return;
+
+        let htmlCode = sourceFiles.html;
+        const cssCode = sourceFiles.css;
+        const jsCode = sourceFiles.js;
+
+        htmlCode = htmlCode.replace(/<link\s+rel=['"]stylesheet['"]\s+href=['"]style\.css['"]\s*\/?>/i, `<style>${cssCode}</style>`);
+        htmlCode = htmlCode.replace(/<script\s+src=['"]script\.js['"]><\/script>/i, `<script>${jsCode}<\/script>`);
+
+        frame.srcdoc = htmlCode;
+      }
+
+      // Bind UI Control Panel actions safely
+      document.getElementById('generateCodeBtn')?.addEventListener('click', generateAutomatedWebsite);
+      document.getElementById('runPreviewBtn')?.addEventListener('click', runLivePreview);
+      
+      document.getElementById('tabHTML')?.addEventListener('click', () => switchCodeTab('html'));
+      document.getElementById('tabCSS')?.addEventListener('click', () => switchCodeTab('css'));
+      document.getElementById('tabJS')?.addEventListener('click', () => switchCodeTab('js'));
+
+      document.getElementById('editorEngine')?.addEventListener('input', (e) => {
+        sourceFiles[activeTab] = e.target.value;
       });
-    }
 
-    // Persist checks
-    if(sessionStorage.getItem('suppuBuilderSession') === 'authenticated') {
-      bootBuilderLayout();
-    }
-  </script>
-</body>
-</html>
+      document.getElementById('exportZipBtn')?.
