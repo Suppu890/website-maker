@@ -112,4 +112,156 @@
           <button id="tabButtonCSS" class="h-full px-5 border-r border-workspace-border text-zinc-500 font-medium">style.css</button>
           <button id="tabButtonJS" class="h-full px-5 border-r border-workspace-border text-zinc-500 font-medium">script.js</button>
         </div>
-        <div class="flex-1 p-3 bg-zinc-9
+        <div class="flex-1 p-3 bg-zinc-950/40 relative">
+          <textarea id="codeEditorWorkspace" class="w-full h-full bg-transparent code-font p-3 text-xs text-zinc-100 outline-none resize-none leading-5 tracking-wide" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <section class="w-[480px] lg:w-[580px] bg-workspace-sidebar border-l border-workspace-border flex flex-col shrink-0 overflow-hidden">
+        <div class="h-8 bg-zinc-950 flex items-center px-4 gap-1.5 shrink-0 border-b border-workspace-border">
+          <span class="w-2.5 h-2.5 bg-red-500/30 rounded-full"></span>
+          <span class="w-2.5 h-2.5 bg-yellow-500/30 rounded-full"></span>
+          <span class="w-2.5 h-2.5 bg-green-500/30 rounded-full"></span>
+          <div class="flex-1 bg-workspace-sidebar mx-4 rounded text-[10px] px-3 text-zinc-500 border border-workspace-border py-0.5 truncate font-mono">https://suppu-sandbox.local/</div>
+        </div>
+        <iframe id="isolatedSandboxPreviewFrame" class="w-full flex-1 bg-white border-none"></iframe>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      let currentActiveViewTab = 'html';
+      let workspaceProjectState = { html: '', css: '', js: '' };
+
+      // Verification Protocol Gate Interceptor
+      const authForm = document.getElementById('masterLoginForm');
+      if (authForm) {
+        authForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const parsedUser = document.getElementById('suppuUser').value.trim();
+          const parsedPass = document.getElementById('suppuPass').value;
+
+          if (parsedUser === 'admin' && parsedPass === 'suppubuilder2026') {
+            sessionStorage.setItem('suppuMasterToken', 'verified');
+            initializeSystemWorkspace();
+          } else {
+            const inlineErrorField = document.getElementById('accessErr');
+            if (inlineErrorField) inlineErrorField.classList.remove('hidden-layer');
+          }
+        });
+      }
+
+      function initializeSystemWorkspace() {
+        document.getElementById('loginGate').classList.add('hidden-layer');
+        document.getElementById('masterWorkspace').classList.remove('hidden-layer');
+        compileSelectedTemplateBlueprint();
+      }
+
+      function compileSelectedTemplateBlueprint() {
+        const appTitle = document.getElementById('blueprintName').value.trim() || 'SaaSify';
+        const headlineText = document.getElementById('blueprintHeadline').value.trim() || 'Supercharge your workflow today.';
+        const customColorHex = document.getElementById('blueprintColor').value.trim() || '#3b82f6';
+        const selectedArchetype = document.getElementById('blueprintTemplate').value;
+
+        if (selectedArchetype === 'saas') {
+          workspaceProjectState.html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appTitle + '</title>\n  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n\n  <div class="container">\n    <nav>\n      <div class="logo">\n        <span class="logo-box"></span>\n        ' + appTitle + '\n      </div>\n      <a href="#" class="btn">Get Started</a>\n    </nav>\n  </div>\n\n  <section class="hero-section">\n    <div class="container">\n      <span class="badge">✨ Introducing ' + appTitle + ' 3.0</span>\n      <h1>' + headlineText + '</h1>\n      <p class="desc">The ultra-fast unified workspace engine designed for modern developer architectures.</p>\n      <button class="btn" id="interactiveActionBtn">Execute App Verification</button>\n    </div>\n  </section>\n\n  <script src="script.js"><\/script>\n</body>\n</html>';
+
+          workspaceProjectState.css = ':root {\n  --accent-color: ' + customColorHex + ';\n  --dark-text: #0f172a;\n  --light-muted: #64748b;\n}\nbody {\n  font-family: "Inter", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--dark-text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }\n.logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; text-transform: tracking-tight; }\n.logo-box { width: 18px; height: 18px; background: var(--accent-color); border-radius: 4px; margin-right: 10px; }\n.hero-section { padding: 120px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--accent-color); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }\nh1 { font-size: 58px; max-width: 800px; margin: 0 auto 24px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--light-muted); max-width: 580px; margin: 0 auto 36px; line-height: 1.6; }\n.btn { display: inline-block; padding: 12px 28px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; }\n.btn:hover { opacity: 0.9; }';
+        } 
+        else if (selectedArchetype === 'portfolio') {
+          workspaceProjectState.html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appTitle + ' | Portfolio</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <section class="profile-container">\n    <div class="avatar-circle" style="background:' + customColorHex + '"></div>\n    <h1>Hello, I am ' + appTitle + '</h1>\n    <p class="tagline">' + headlineText + '</p>\n    <div class="links-row">\n      <button class="action-link" id="interactiveActionBtn">Contact My Terminal</button>\n    </div>\n  </section>\n  <script src="script.js"><\/script>\n</body>\n</html>';
+
+          workspaceProjectState.css = 'body {\n  background: #09090b;\n  color: #fafafa;\n  font-family: system-ui, sans-serif;\n  margin: 0; min-h: screen;\n  display: flex; align-items: center; justify-content: center;\n}\n.profile-container { text-align: center; padding: 40px 20px; }\n.avatar-circle { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 24px; }\nh1 { font-size: 36px; tracking: -0.04em; margin-bottom: 8px; }\n.tagline { color: #a1a1aa; font-size: 18px; margin-bottom: 32px; }\n.action-link { background: transparent; border: 1px solid #3f3f46; color: white; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: 500; }';
+        } 
+        else {
+          workspaceProjectState.html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>' + appTitle + ' Corporate</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <header style="border-top: 4px solid ' + customColorHex + '; padding: 30px; text-align:center;">\n    <h2>' + appTitle + ' Enterprise Systems</h2>\n    <p>' + headlineText + '</p>\n    <button id="interactiveActionBtn" style="padding:10px 20px; background:#111; color:#fff; border:none; border-radius:4px; cursor:pointer;">Initialize Protocol</button>\n  </header>\n  <script src="script.js"><\/script>\n</body>\n</html>';
+
+          workspaceProjectState.css = 'body { background: #f4f4f5; color: #18181b; font-family: sans-serif; padding: 40px; }\nheader { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 60px; max-width: 600px; margin: 0 auto; border-radius: 8px; }';
+        }
+
+        workspaceProjectState.js = '// Automated Functionality Intercept\ndocument.addEventListener("DOMContentLoaded", () => {\n  console.log("Suppu sandbox application initialization routine verified.");\n  \n  const eventTriggerNode = document.getElementById("interactiveActionBtn");\n  if (eventTriggerNode) {\n    eventTriggerNode.addEventListener("click", () => {\n      alert("Action event processed successfully from ' + appTitle + '!");\n    });\n  }\n});';
+
+        const codeArea = document.getElementById('codeEditorWorkspace');
+        if (codeArea) codeArea.value = workspaceProjectState[currentActiveViewTab];
+        executeActiveSandboxPreview();
+      }
+
+      function transitionActiveCodeTab(targetTabKey) {
+        document.getElementById('tabButtonHTML').className = 'h-full px-5 border-r border-workspace-border text-zinc-500 font-medium';
+        document.getElementById('tabButtonCSS').className = 'h-full px-5 border-r border-workspace-border text-zinc-500 font-medium';
+        document.getElementById('tabButtonJS').className = 'h-full px-5 border-r border-workspace-border text-zinc-500 font-medium';
+
+        currentActiveViewTab = targetTabKey;
+
+        let formattingIdKey = 'tabButtonHTML';
+        if (targetTabKey === 'css') formattingIdKey = 'tabButtonCSS';
+        if (targetTabKey === 'js') formattingIdKey = 'tabButtonJS';
+
+        const activeDOMBtn = document.getElementById(formattingIdKey);
+        if (activeDOMBtn) {
+          activeDOMBtn.className = 'h-full px-5 border-r border-workspace-border text-workspace-accent font-bold bg-workspace-editor border-t-2 border-t-workspace-accent';
+        }
+
+        const codeArea = document.getElementById('codeEditorWorkspace');
+        if (codeArea) codeArea.value = workspaceProjectState[currentActiveViewTab];
+      }
+
+      function executeActiveSandboxPreview() {
+        const targetFrame = document.getElementById('isolatedSandboxPreviewFrame');
+        if (!targetFrame) return;
+
+        let markupPayload = workspaceProjectState.html;
+        const stylePayload = workspaceProjectState.css;
+        const scriptPayload = workspaceProjectState.js;
+
+        // Surgical replacement links injection
+        markupPayload = markupPayload.replace(/<link\s+rel=['"]stylesheet['"]\s+href=['"]style\.css['"]\s*\/?>/i, `<style>${stylePayload}</style>`);
+        markupPayload = markupPayload.replace(/<script\s+src=['"]script\.js['"]><\/script>/i, `<script>${scriptPayload}<\/script>`);
+
+        targetFrame.srcdoc = markupPayload;
+      }
+
+      // Safe DOM Event bindings
+      document.getElementById('generatePayloadBtn')?.addEventListener('click', compileSelectedTemplateBlueprint);
+      document.getElementById('compilePreviewBtn')?.addEventListener('click', executeActiveSandboxPreview);
+
+      document.getElementById('tabButtonHTML')?.addEventListener('click', () => transitionActiveCodeTab('html'));
+      document.getElementById('tabButtonCSS')?.addEventListener('click', () => transitionActiveCodeTab('css'));
+      document.getElementById('tabButtonJS')?.addEventListener('click', () => transitionActiveCodeTab('js'));
+
+      document.getElementById('codeEditorWorkspace')?.addEventListener('input', (event) => {
+        workspaceProjectState[currentActiveViewTab] = event.target.value;
+      });
+
+      document.getElementById('triggerZipExportBtn')?.addEventListener('click', () => {
+        if (typeof JSZip === 'undefined') {
+          alert("ZIP archive system dependencies are currently optimizing. Please wait 2 seconds.");
+          return;
+        }
+
+        const packageContainer = new JSZip();
+        packageContainer.file("index.html", workspaceProjectState.html);
+        packageContainer.file("style.css", workspaceProjectState.css);
+        packageContainer.file("script.js", workspaceProjectState.js);
+
+        packageContainer.generateAsync({ type: "blob" }).then((compiledStreamBlob) => {
+          const proxyDownloadAnchor = document.createElement('a');
+          proxyDownloadAnchor.href = URL.createObjectURL(compiledStreamBlob);
+          proxyDownloadAnchor.download = "suppu_generated_site.zip";
+          proxyDownloadAnchor.click();
+        }).catch(() => {
+          alert("An unexpected exception occurred inside the stream serialization matrix.");
+        });
+      });
+
+      // Session persistence validator
+      if (sessionStorage.getItem('suppuMasterToken') === 'verified') {
+        initializeSystemWorkspace();
+      }
+    });
+  </script>
+</body>
+</html>
