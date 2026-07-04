@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suppu Creator — Master Website Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- JSZip Engine for processing direct uncompressed local archive streams -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
     tailwind.config = {
@@ -33,6 +34,7 @@
 </head>
 <body class="bg-builder-bg text-slate-200 min-h-screen flex flex-col overflow-hidden">
 
+  <!-- SECURITY GATEWAY (LOCK SCREEN) -->
   <div id="loginGate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 px-4">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_60%)]"></div>
     <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 relative z-10">
@@ -55,8 +57,10 @@
     </div>
   </div>
 
+  <!-- MASTER WORKSPACE VIEWPORT -->
   <div id="builderWorkspace" class="hidden-panel flex-1 flex flex-col h-screen">
     
+    <!-- HEADER APP BAR -->
     <header class="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
       <div class="flex items-center gap-3">
         <span class="font-extrabold text-xl text-white tracking-tight">Suppu Creator Engine</span>
@@ -68,8 +72,10 @@
       </div>
     </header>
 
+    <!-- CORE FLEX CONTAINER -->
     <div class="flex-1 flex overflow-hidden">
       
+      <!-- LEFT MODULE: SITE CUSTOMIZER CONTROLS -->
       <aside class="w-80 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 overflow-y-auto p-5 space-y-5">
         <div>
           <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Website Blueprint</h3>
@@ -94,6 +100,7 @@
         </button>
       </aside>
 
+      <!-- CENTER MODULE: MONITOR INTERFACE CODE TABS -->
       <section class="flex-1 flex flex-col bg-slate-950 overflow-hidden">
         <div class="h-9 bg-slate-900/60 border-b border-slate-800 flex items-center text-xs">
           <button id="tabHTML" class="h-full px-4 border-r border-slate-800 text-blue-400 font-bold bg-slate-950 border-t-2 border-t-blue-500">index.html</button>
@@ -105,6 +112,7 @@
         </div>
       </section>
 
+      <!-- RIGHT MODULE: ISOLATED RUNTIME RUN TARGETS -->
       <section class="w-[450px] lg:w-[550px] bg-slate-900 border-l border-slate-800 flex flex-col shrink-0 overflow-hidden">
         <div class="h-8 bg-slate-950 flex items-center px-4 gap-1.5 shrink-0 border-b border-slate-800">
           <span class="w-2.5 h-2.5 bg-red-500/40 rounded-full"></span>
@@ -118,6 +126,7 @@
     </div>
   </div>
 
+  <!-- SCRIPT PIPELINES MATRIX -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       
@@ -153,9 +162,9 @@
         const tagline = document.getElementById('siteTagline').value.trim() || 'Supercharge your workflow today.';
         const color = document.getElementById('siteColor').value.trim() || '#8b5cf6';
 
-        sourceFiles.html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>${name}</title>\n<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="container">\n  <nav>\n    <a href="#" class="logo">${name}</a>\n    <div style="display:flex; gap:24px; align-items:center;">\n      <a href="#" class="btn">Get Started</a>\n    </div>\n  </nav>\n</div>\n\n<section class="hero">\n  <div class="container">\n    <span class="badge">✨ Introducing ${name} 2.0</span>\n    <h1>${tagline}</h1>\n    <p class="desc">The all-in-one platform built to help modern teams ship faster, collaborate better, and scale seamlessly.</p>\n    <button class="btn" id="actionButton">Test Interactive Script</button>\n  </div>\n</section>\n\n<script src="script.js"><\/script>\n</body>\n</html>`;
+        sourceFiles.html = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>` + name + `</title>\n<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="container">\n  <nav>\n    <a href="#" class="logo">\n      <span style="display: inline-block; width: 16px; height: 16px; background: ` + color + `; border-radius: 4px; margin-right: 8px;"></span>\n      ` + name + `\n    </a>\n    <div style="display:flex; gap:24px; align-items:center;">\n      <a href="#" class="btn">Get Started</a>\n    </div>\n  </nav>\n</div>\n\n<section class="hero">\n  <div class="container">\n    <span class="badge">✨ Introducing ` + name + ` 2.0</span>\n    <h1>` + tagline + `</h1>\n    <p class="desc">The all-in-one platform built to help modern teams ship faster, collaborate better, and scale seamlessly.</p>\n    <button class="btn" id="actionButton">Test Interactive Script</button>\n  </div>\n</section>\n\n<script src="script.js"><\/script>\n</body>\n</html>`;
 
-        sourceFiles.css = `:root {\n  --primary: ${color};\n  --text: #0f172a;\n  --muted: #64748b;\n}\nbody {\n  font-family: "Plus Jakarta Sans", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }\n.logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--text); }\n.hero { padding: 100px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--primary); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }\nh1 { font-size: 56px; max-width: 750px; margin: 0 auto 20px; line-height: 1.15; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--muted); max-width: 550px; margin: 0 auto 30px; }\n.btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }`;
+        sourceFiles.css = `:root {\n  --primary: ` + color + `;\n  --text: #0f172a;\n  --muted: #64748b;\n}\nbody {\n  font-family: "Plus Jakarta Sans", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }\n.logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--text); display: flex; align-items: center; }\n.hero { padding: 100px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--primary); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }\nh1 { font-size: 56px; max-width: 750px; margin: 0 auto 20px; line-height: 1.15; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--muted); max-width: 550px; margin: 0 auto 30px; }\n.btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }`;
 
         sourceFiles.js = `// Generated Interactive Middleware Scripts\ndocument.addEventListener("DOMContentLoaded", function() {\n  console.log("Interactive runtime frame loaded correctly.");\n  \n  document.getElementById("actionButton")?.addEventListener("click", () => {\n    alert("Hello! Custom script trigger executed from the Suppu Playground!");\n  });\n});`;
 
@@ -206,4 +215,29 @@
         sourceFiles[activeTab] = e.target.value;
       });
 
-      document.getElementById('exportZipBtn')?.
+      document.getElementById('exportZipBtn')?.addEventListener('click', () => {
+        if(typeof JSZip === 'undefined') {
+          alert("Compression module initialization delay. Please click again.");
+          return;
+        }
+        const zip = new JSZip();
+        zip.file("index.html", sourceFiles.html);
+        zip.file("style.css", sourceFiles.css);
+        zip.file("script.js", sourceFiles.js);
+
+        zip.generateAsync({ type: "blob" }).then((content) => {
+          const dlLink = document.createElement('a');
+          dlLink.href = URL.createObjectURL(content);
+          dlLink.download = "suppu_generated_site.zip";
+          dlLink.click();
+        });
+      });
+
+      // Persistent authorization check
+      if(sessionStorage.getItem('suppuBuilderSession') === 'authenticated') {
+        bootBuilderLayout();
+      }
+    });
+  </script>
+</body>
+</html>
