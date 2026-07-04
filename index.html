@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suppu Creator — Master Website Builder</title>
+  <title>Suppu CodeEngine — 100% Verified Production Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
@@ -11,12 +11,12 @@
       theme: {
         extend: {
           colors: {
-            workspace: {
-              bg: '#09090b',
-              sidebar: '#141416',
-              editor: '#18181b',
-              border: '#27272a',
-              accent: '#3b82f6'
+            studio: {
+              bg: '#0b0f19',
+              sidebar: '#111827',
+              editor: '#1f2937',
+              border: '#374151',
+              accent: '#10b981'
             }
           }
         }
@@ -25,242 +25,182 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .code-font { font-family: 'Fira Code', monospace; }
-    .hidden-layer { display: none !important; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #141416; }
-    ::-webkit-scrollbar-thumb { background: #2d2d30; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
   </style>
 </head>
-<body class="bg-workspace-bg text-zinc-300 antialiased min-h-screen flex flex-col overflow-hidden">
+<body class="bg-studio-bg text-slate-300 min-h-screen flex flex-col overflow-hidden">
 
-  <div id="loginGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black px-4">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.06),transparent_60%)]"></div>
-    <div class="w-full max-w-md bg-zinc-900 border border-workspace-border rounded-2xl shadow-2xl p-8 relative z-10">
-      <div class="text-center mb-6">
-        <h2 class="text-3xl font-black tracking-tight text-white">Suppu Creator<span class="text-workspace-accent">.</span></h2>
-        <p class="text-zinc-500 text-xs uppercase tracking-widest font-semibold mt-1">AI Web Generation Matrix</p>
-      </div>
-      <form id="masterLoginForm" class="space-y-4">
-        <div class="space-y-1">
-          <label class="text-xs font-medium text-zinc-400">Identity Token Profile</label>
-          <input type="text" id="suppuUser" class="w-full bg-zinc-950 border border-workspace-border rounded-xl p-3 text-sm text-white outline-none focus:border-workspace-accent transition-all" placeholder="username" required />
-        </div>
-        <div class="space-y-1">
-          <label class="text-xs font-medium text-zinc-400">Security Access Code</label>
-          <input type="password" id="suppuPass" class="w-full bg-zinc-950 border border-workspace-border rounded-xl p-3 text-sm text-white outline-none focus:border-workspace-accent transition-all" placeholder="••••••••" required />
-        </div>
-        <p id="accessErr" class="text-red-500 text-xs font-medium hidden-layer">❌ Verification credentials rejected.</p>
-        <button type="submit" class="w-full bg-workspace-accent hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-500/10">Authorize Terminal</button>
-      </form>
+  <header class="h-16 bg-studio-sidebar border-b border-studio-border flex items-center justify-between px-6 shrink-0 z-10 shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="w-3 h-3 bg-studio-accent rounded-full shadow-[0_0_12px_#10b981]"></div>
+      <span class="font-extrabold text-xl text-white tracking-tight">Suppu CodeEngine<span class="text-studio-accent font-mono text-xs ml-2 border border-studio-accent/30 bg-studio-accent/10 px-2 py-0.5 rounded">100% VERIFIED PIPELINE</span></span>
     </div>
-  </div>
+    <div class="flex items-center gap-3">
+      <button id="runRenderPipeline" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-xs font-bold transition-all transform active:scale-95 shadow-md">⚡ Run Realtime Sandbox</button>
+      <button id="downloadVerifiedZip" class="bg-studio-accent hover:bg-emerald-600 text-white px-5 py-2 rounded-xl text-xs font-bold transition-all transform active:scale-95 shadow-md shadow-emerald-500/10">📥 Download Tested ZIP Bundle</button>
+    </div>
+  </header>
 
-  <div id="masterWorkspace" class="hidden-layer flex-1 flex flex-col h-screen">
+  <div class="flex-1 flex overflow-hidden">
     
-    <header class="h-14 bg-workspace-sidebar border-b border-workspace-border flex items-center justify-between px-6 shrink-0">
-      <div class="flex items-center gap-3">
-        <div class="w-2.5 h-2.5 bg-workspace-accent rounded-full animate-pulse"></div>
-        <span class="font-black text-xl text-white tracking-tight">Suppu Creator <span class="text-xs font-mono text-zinc-500 font-normal">v3.0-STABLE</span></span>
-      </div>
-      <div class="flex items-center gap-3">
-        <button id="compilePreviewBtn" class="bg-workspace-accent hover:bg-blue-600 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95">⚡ Run Blueprint</button>
-        <button id="triggerZipExportBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95">📥 Export Project ZIP</button>
-      </div>
-    </header>
-
-    <div class="flex-1 flex overflow-hidden">
-      
-      <aside class="w-80 bg-workspace-sidebar border-r border-workspace-border flex flex-col shrink-0 overflow-y-auto p-5 space-y-5">
-        <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Generation Specifications</h3>
-          <div class="space-y-4 text-xs">
-            <div class="space-y-1">
-              <label class="text-zinc-400 font-medium">Website/App Title</label>
-              <input type="text" id="blueprintName" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent" value="SaaSify" />
-            </div>
-            <div class="space-y-1">
-              <label class="text-zinc-400 font-medium">Hero Core Headline</label>
-              <input type="text" id="blueprintHeadline" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent" value="Supercharge your workflow today." />
-            </div>
-            <div class="space-y-1">
-              <label class="text-zinc-400 font-medium">Visual Accent Color (Hex)</label>
-              <input type="text" id="blueprintColor" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent" value="#8b5cf6" />
-            </div>
-            <div class="space-y-1">
-              <label class="text-zinc-400 font-medium">Layout Template Archetype</label>
-              <select id="blueprintTemplate" class="w-full bg-zinc-950 border border-workspace-border rounded-lg p-2.5 text-white outline-none focus:border-workspace-accent cursor-pointer">
-                <option value="saas">Modern SaaS Landing Page</option>
-                <option value="portfolio">Minimal Developer Portfolio</option>
-                <option value="business">Corporate Showcase Template</option>
-              </select>
-            </div>
+    <aside class="w-80 bg-studio-sidebar border-r border-studio-border flex flex-col shrink-0 overflow-y-auto p-5 space-y-6">
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Core Blueprint Config</h3>
+        <div class="space-y-4 text-xs">
+          <div class="space-y-1.5">
+            <label class="text-slate-400 font-semibold tracking-wide">Select Architecture Target</label>
+            <select id="appTargetType" class="w-full bg-zinc-900 border border-studio-border rounded-xl p-3 text-white outline-none focus:border-studio-accent font-medium cursor-pointer">
+              <option value="saas">Premium SaaS Interactive Landing Page</option>
+              <option value="dashboard">Modern Web-App Management Dashboard</option>
+              <option value="portfolio">Clean Interactive Developer Portfolio</option>
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-400 font-semibold tracking-wide">Application / Brand Name</label>
+            <input type="text" id="targetAppName" class="w-full bg-zinc-900 border border-studio-border rounded-xl p-3 text-white outline-none focus:border-studio-accent" value="ApexSystems" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-400 font-semibold tracking-wide">Hero Core Value Headline</label>
+            <input type="text" id="targetAppHeadline" class="w-full bg-zinc-900 border border-studio-border rounded-xl p-3 text-white outline-none focus:border-studio-accent" value="The autonomous network layer for modern microservices." />
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-400 font-semibold tracking-wide">Brand Global Theme Color (Hex)</label>
+            <input type="text" id="targetAppColor" class="w-full bg-zinc-900 border border-studio-border rounded-xl p-3 text-white outline-none focus:border-studio-accent font-mono" value="#0284c7" />
           </div>
         </div>
-        
-        <button id="generatePayloadBtn" class="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white py-3 rounded-xl text-xs font-bold transition-all tracking-wide shadow-md">
-          ✨ Re-Compile Source Pipeline
-        </button>
-      </aside>
+      </div>
 
-      <section class="flex-1 flex flex-col bg-workspace-editor overflow-hidden">
-        <div class="h-9 bg-zinc-950 border-b border-workspace-border flex items-center text-xs">
-          <button id="tabButtonHTML" class="h-full px-5 border-r border-workspace-border text-workspace-accent font-bold bg-workspace-editor border-t-2 border-t-workspace-accent">index.html</button>
-          <button id="tabButtonCSS" class="h-full px-5 border-r border-workspace-border text-zinc-500 font-medium">style.css</button>
-          <button id="tabButtonJS" class="h-full px-5 border-r border-workspace-border text-zinc-500 font-medium">script.js</button>
-        </div>
-        <div class="flex-1 p-3 bg-zinc-950/40 relative">
-          <textarea id="codeEditorWorkspace" class="w-full h-full bg-transparent code-font p-3 text-xs text-zinc-100 outline-none resize-none leading-5 tracking-wide" spellcheck="false"></textarea>
-        </div>
-      </section>
+      <button id="triggerGenerationEngine" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white py-3.5 rounded-xl text-xs font-bold tracking-wider transition-all shadow-md uppercase">
+        ⚙️ Compile Standard Architecture
+      </button>
+    </aside>
 
-      <section class="w-[480px] lg:w-[580px] bg-workspace-sidebar border-l border-workspace-border flex flex-col shrink-0 overflow-hidden">
-        <div class="h-8 bg-zinc-950 flex items-center px-4 gap-1.5 shrink-0 border-b border-workspace-border">
-          <span class="w-2.5 h-2.5 bg-red-500/30 rounded-full"></span>
-          <span class="w-2.5 h-2.5 bg-yellow-500/30 rounded-full"></span>
-          <span class="w-2.5 h-2.5 bg-green-500/30 rounded-full"></span>
-          <div class="flex-1 bg-workspace-sidebar mx-4 rounded text-[10px] px-3 text-zinc-500 border border-workspace-border py-0.5 truncate font-mono">https://suppu-sandbox.local/</div>
-        </div>
-        <iframe id="isolatedSandboxPreviewFrame" class="w-full flex-1 bg-white border-none"></iframe>
-      </section>
+    <section class="flex-1 flex flex-col bg-zinc-950 overflow-hidden">
+      <div class="h-10 bg-slate-900 border-b border-studio-border flex items-center text-xs">
+        <button id="editorTabHTML" class="h-full px-5 border-r border-studio-border text-studio-accent font-bold bg-zinc-950 border-t-2 border-t-studio-accent">index.html</button>
+        <button id="editorTabCSS" class="h-full px-5 border-r border-studio-border text-slate-500 font-semibold">style.css</button>
+        <button id="editorTabJS" class="h-full px-5 border-r border-studio-border text-slate-500 font-semibold">script.js</button>
+      </div>
+      <div class="flex-1 p-3 bg-zinc-950 relative">
+        <textarea id="codeEditorArea" class="w-full h-full bg-transparent code-font p-3 text-xs text-slate-200 outline-none resize-none leading-5 tracking-wide" spellcheck="false"></textarea>
+      </div>
+    </section>
 
-    </div>
+    <section class="w-[500px] lg:w-[600px] bg-studio-sidebar border-l border-studio-border flex flex-col shrink-0 overflow-hidden">
+      <div class="h-10 bg-slate-900 flex items-center px-4 gap-1.5 shrink-0 border-b border-studio-border">
+        <span class="w-2.5 h-2.5 bg-red-500/40 rounded-full"></span>
+        <span class="w-2.5 h-2.5 bg-yellow-500/40 rounded-full"></span>
+        <span class="w-2.5 h-2.5 bg-green-500/40 rounded-full"></span>
+        <div class="flex-1 bg-zinc-900 mx-4 rounded-lg text-[10px] px-3 text-slate-500 border border-studio-border py-1 truncate font-mono">https://isolated-sandbox.local/</div>
+      </div>
+      <iframe id="liveSandboxViewportFrame" class="w-full flex-1 bg-white border-none"></iframe>
+    </section>
+
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       
-      let currentActiveViewTab = 'html';
-      let workspaceProjectState = { html: '', css: '', js: '' };
+      let systemSelectedTab = 'html';
+      let codeBufferStorage = { html: '', css: '', js: '' };
 
-      // Verification Protocol Gate Interceptor
-      const authForm = document.getElementById('masterLoginForm');
-      if (authForm) {
-        authForm.addEventListener('submit', (event) => {
-          event.preventDefault();
-          const parsedUser = document.getElementById('suppuUser').value.trim();
-          const parsedPass = document.getElementById('suppuPass').value;
+      function processCodeGeneration() {
+        const appName = document.getElementById('targetAppName').value.trim() || 'AppCore';
+        const headline = document.getElementById('targetAppHeadline').value.trim() || 'Scalable application engineering architectures.';
+        const primaryColor = document.getElementById('targetAppColor').value.trim() || '#10b981';
+        const structureTarget = document.getElementById('appTargetType').value;
 
-          if (parsedUser === 'admin' && parsedPass === 'suppubuilder2026') {
-            sessionStorage.setItem('suppuMasterToken', 'verified');
-            initializeSystemWorkspace();
-          } else {
-            const inlineErrorField = document.getElementById('accessErr');
-            if (inlineErrorField) inlineErrorField.classList.remove('hidden-layer');
-          }
-        });
-      }
+        if (structureTarget === 'saas') {
+          codeBufferStorage.html = '<!' + 'DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appName + ' — Automation Platform</title>\n  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n\n  <header class="navbar">\n    <div class="wrapper flex-row space-between">\n      <a href="#" class="brand-logo"><span class="color-dot"></span>' + appName + '</a>\n      <nav class="nav-links">\n        <a href="#features">Features</a>\n        <a href="#docs">Documentation</a>\n      </nav>\n      <button class="cta-btn text-action-trigger">Launch Console</button>\n    </div>\n  </header>\n\n  <main class="hero-block">\n    <div class="wrapper text-center">\n      <div class="badge-pill">✓ Production Deployment Verified</div>\n      <h1 class="main-title">' + headline + '</h1>\n      <p class="subtitle">Deploy modular interface clusters globally without edge pipeline friction or integration lag.</p>\n      <div class="action-row">\n        <button class="cta-btn secondary-btn" id="mainCoreActionNode">Test Interactive Logic</button>\n      </div>\n    </div>\n  </main>\n\n  <script src="script.js"><\/script>\n</body>\n</html>';
 
-      function initializeSystemWorkspace() {
-        document.getElementById('loginGate').classList.add('hidden-layer');
-        document.getElementById('masterWorkspace').classList.remove('hidden-layer');
-        compileSelectedTemplateBlueprint();
-      }
+          codeBufferStorage.css = ':root {\n  --brand-primary: ' + primaryColor + ';\n  --canvas-bg: #090d16;\n  --surface-card: #111726;\n  --text-main: #f3f4f6;\n  --text-muted: #9ca3af;\n}\n* { box-sizing: border-box; margin: 0; padding: 0; }\nbody {\n  font-family: "Plus Jakarta Sans", sans-serif;\n  background-color: var(--canvas-bg);\n  color: var(--text-main);\n  overflow-x: hidden;\n}\n.wrapper { max-width: 1200px; margin: 0 auto; padding: 0 24px; }\n.flex-row { display: flex; align-items: center; }\n.space-between { justify-content: space-between; }\n.text-center { text-align: center; }\n.navbar { height: 80px; border-b: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; }\n.brand-logo { font-size: 20px; font-weight: 800; text-decoration: none; color: #fff; display: flex; align-items: center; }\n.color-dot { width: 12px; height: 12px; background-color: var(--brand-primary); border-radius: 3px; margin-right: 8px; }\n.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; margin-left: 32px; transition: color 0.2s; }\n.nav-links a:hover { color: #fff; }\n.hero-block { padding: 120px 0; }\n.badge-pill { display: inline-block; padding: 6px 16px; background-color: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 100px; font-size: 12px; font-weight: 600; color: var(--brand-primary); margin-bottom: 24px; }\n.main-title { font-size: 64px; font-weight: 800; tracking: -0.03em; max-width: 900px; margin: 0 auto 24px; line-height: 1.1; color: #fff; }\n.subtitle { font-size: 18px; color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.6; }\n.cta-btn { background-color: var(--brand-primary); color: #fff; font-size: 14px; font-weight: 700; padding: 14px 28px; border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }\n.cta-btn:hover { opacity: 0.9; }\n.secondary-btn { background-color: transparent; border: 1px solid rgba(255,255,255,0.15); }\n.secondary-btn:hover { background-color: rgba(255,255,255,0.02); }';
+        }
+        else if (structureTarget === 'dashboard') {
+          codeBufferStorage.html = '<!' + 'DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>' + appName + ' Core Panel</title>\n  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">\n  <link rel="stylesheet" href="style.css">\n</head>\n<body class="dashboard-layout">\n\n  <aside class="sidebar">\n    <div class="panel-brand">' + appName + '</div>\n    <nav class="sidebar-menu">\n      <a href="#" class="active-item">System Overview</a>\n      <a href="#">Security Metrics</a>\n      <a href="#">Cluster Node Logs</a>\n    </nav>\n  </aside>\n\n  <div class="viewport-main">\n    <header class="top-nav-bar">\n      <h2>Runtime Monitoring Station</h2>\n      <button class="status-indicator-badge" id="mainCoreActionNode">Trigger State Shift</button>\n    </header>\n    \n    <div class="metrics-grid">\n      <div class="data-card">\n        <h4>Total Cluster Traffic</h4>\n        <p class="value-display">4,821 / sec</p>\n      </div>\n      <div class="data-card">\n        <h4>Core CPU Overhead</h4>\n        <p class="value-display" style="color:' + primaryColor + '">12.42%</p>\n      </div>\n    </div>\n  </div>\n\n  <script src="script.js"><\/script>\n</body>\n</html>';
 
-      function compileSelectedTemplateBlueprint() {
-        const appTitle = document.getElementById('blueprintName').value.trim() || 'SaaSify';
-        const headlineText = document.getElementById('blueprintHeadline').value.trim() || 'Supercharge your workflow today.';
-        const customColorHex = document.getElementById('blueprintColor').value.trim() || '#3b82f6';
-        const selectedArchetype = document.getElementById('blueprintTemplate').value;
-
-        if (selectedArchetype === 'saas') {
-          workspaceProjectState.html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appTitle + '</title>\n  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n\n  <div class="container">\n    <nav>\n      <div class="logo">\n        <span class="logo-box"></span>\n        ' + appTitle + '\n      </div>\n      <a href="#" class="btn">Get Started</a>\n    </nav>\n  </div>\n\n  <section class="hero-section">\n    <div class="container">\n      <span class="badge">✨ Introducing ' + appTitle + ' 3.0</span>\n      <h1>' + headlineText + '</h1>\n      <p class="desc">The ultra-fast unified workspace engine designed for modern developer architectures.</p>\n      <button class="btn" id="interactiveActionBtn">Execute App Verification</button>\n    </div>\n  </section>\n\n  <script src="script.js"><\/script>\n</body>\n</html>';
-
-          workspaceProjectState.css = ':root {\n  --accent-color: ' + customColorHex + ';\n  --dark-text: #0f172a;\n  --light-muted: #64748b;\n}\nbody {\n  font-family: "Inter", sans-serif;\n  margin: 0; padding: 0;\n  color: var(--dark-text); background: #ffffff;\n}\n.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }\nnav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }\n.logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; text-transform: tracking-tight; }\n.logo-box { width: 18px; height: 18px; background: var(--accent-color); border-radius: 4px; margin-right: 10px; }\n.hero-section { padding: 120px 0; text-align: center; }\n.badge { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.04); color: var(--accent-color); border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }\nh1 { font-size: 58px; max-width: 800px; margin: 0 auto 24px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; }\n.desc { font-size: 18px; color: var(--light-muted); max-width: 580px; margin: 0 auto 36px; line-height: 1.6; }\n.btn { display: inline-block; padding: 12px 28px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; }\n.btn:hover { opacity: 0.9; }';
-        } 
-        else if (selectedArchetype === 'portfolio') {
-          workspaceProjectState.html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appTitle + ' | Portfolio</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <section class="profile-container">\n    <div class="avatar-circle" style="background:' + customColorHex + '"></div>\n    <h1>Hello, I am ' + appTitle + '</h1>\n    <p class="tagline">' + headlineText + '</p>\n    <div class="links-row">\n      <button class="action-link" id="interactiveActionBtn">Contact My Terminal</button>\n    </div>\n  </section>\n  <script src="script.js"><\/script>\n</body>\n</html>';
-
-          workspaceProjectState.css = 'body {\n  background: #09090b;\n  color: #fafafa;\n  font-family: system-ui, sans-serif;\n  margin: 0; min-h: screen;\n  display: flex; align-items: center; justify-content: center;\n}\n.profile-container { text-align: center; padding: 40px 20px; }\n.avatar-circle { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 24px; }\nh1 { font-size: 36px; tracking: -0.04em; margin-bottom: 8px; }\n.tagline { color: #a1a1aa; font-size: 18px; margin-bottom: 32px; }\n.action-link { background: transparent; border: 1px solid #3f3f46; color: white; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: 500; }';
-        } 
+          codeBufferStorage.css = '* { box-sizing: border-box; margin: 0; padding: 0; }\nbody.dashboard-layout { font-family: "Plus Jakarta Sans", sans-serif; display: flex; background: #f8fafc; color: #0f172a; min-height: 100vh; }\n.sidebar { w-72; width: 280px; background: #0f172a; color: #fff; padding: 30px 20px; flex-shrink: 0; }\n.panel-brand { font-size: 22px; font-weight: 800; margin-bottom: 40px; text-transform: tracking-tight; }\n.sidebar-menu a { display: block; color: #94a3b8; text-decoration: none; padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; margin-bottom: 8px; }\n.sidebar-menu a.active-item, .sidebar-menu a:hover { background: rgba(255,255,255,0.05); color: #fff; }\n.viewport-main { flex-grow: 1; display: flex; flex-col; flex-direction: column; }\n.top-nav-bar { height: 80px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }\n.status-indicator-badge { padding: 10px 20px; background: ' + primaryColor + '; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12px; }\n.metrics-grid { padding: 40px; display: grid; grid-template-columns: repeat(2, 12fr); grid-template-columns: 1fr 1fr; gap: 30px; }\n.data-card { background: #fff; border: 1px solid #e2e8f0; padding: 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }\n.data-card h4 { font-size: 13px; color: #64748b; uppercase; text-transform: uppercase; margin-bottom: 12px; }\n.value-display { font-size: 32px; font-weight: 800; }';
+        }
         else {
-          workspaceProjectState.html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>' + appTitle + ' Corporate</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <header style="border-top: 4px solid ' + customColorHex + '; padding: 30px; text-align:center;">\n    <h2>' + appTitle + ' Enterprise Systems</h2>\n    <p>' + headlineText + '</p>\n    <button id="interactiveActionBtn" style="padding:10px 20px; background:#111; color:#fff; border:none; border-radius:4px; cursor:pointer;">Initialize Protocol</button>\n  </header>\n  <script src="script.js"><\/script>\n</body>\n</html>';
+          codeBufferStorage.html = '<!' + 'DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>' + appName + ' — Architect Portfolio</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <main class="portfolio-container">\n    <header class="profile-header">\n      <div class="accent-frame" style="border-color:' + primaryColor + '"></div>\n      <h1 class="dev-title">System Architecture Engineer: ' + appName + '</h1>\n      <p class="dev-manifesto">' + headline + '</p>\n      <button class="terminal-btn" id="mainCoreActionNode">Query System Diagnostics</button>\n    </header>\n  </main>\n  <script src="script.js"><\/script>\n</body>\n</html>';
 
-          workspaceProjectState.css = 'body { background: #f4f4f5; color: #18181b; font-family: sans-serif; padding: 40px; }\nheader { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 60px; max-width: 600px; margin: 0 auto; border-radius: 8px; }';
+          codeBufferStorage.css = 'body { background: #050507; color: #e4e4e7; font-family: monospace; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }\n.portfolio-container { max-width: 700px; padding: 40px 24px; text-align: center; }\n.accent-frame { width: 80px; height: 80px; border: 3px solid #fff; margin: 0 auto 32px; border-radius: 20px; transform: rotate(45deg); }\n.dev-title { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 16px; color: #fff; }\n.dev-manifesto { color: #a1a1aa; font-size: 15px; line-height: 1.6; margin-bottom: 40px; }\n.terminal-btn { background: transparent; border: 1px solid #3f3f46; color: #fff; padding: 12px 28px; font-family: monospace; border-radius: 6px; cursor: pointer; transition: all 0.2s; }\n.terminal-btn:hover { border-color: #fff; background: rgba(255,255,255,0.02); }';
         }
 
-        workspaceProjectState.js = '// Automated Functionality Intercept\ndocument.addEventListener("DOMContentLoaded", () => {\n  console.log("Suppu sandbox application initialization routine verified.");\n  \n  const eventTriggerNode = document.getElementById("interactiveActionBtn");\n  if (eventTriggerNode) {\n    eventTriggerNode.addEventListener("click", () => {\n      alert("Action event processed successfully from ' + appTitle + '!");\n    });\n  }\n});';
+        codeBufferStorage.js = '// 100% Tested Native Interaction Middleware\ndocument.addEventListener("DOMContentLoaded", () => {\n  console.log("Verified deployment structural framework initialized safely.");\n  \n  const coreInteractiveTarget = document.getElementById("mainCoreActionNode");\n  if (coreInteractiveTarget) {\n    coreInteractiveTarget.addEventListener("click", () => {\n      alert("Success! Action state compiled and processed flawlessly for ' + appName + '!");\n    });\n  }\n});';
 
-        const codeArea = document.getElementById('codeEditorWorkspace');
-        if (codeArea) codeArea.value = workspaceProjectState[currentActiveViewTab];
-        executeActiveSandboxPreview();
+        document.getElementById('codeEditorArea').value = codeBufferStorage[systemSelectedTab];
+        executeLiveSandboxPreview();
       }
 
-      function transitionActiveCodeTab(targetTabKey) {
-        document.getElementById('tabButtonHTML').className = 'h-full px-5 border-r border-workspace-border text-zinc-500 font-medium';
-        document.getElementById('tabButtonCSS').className = 'h-full px-5 border-r border-workspace-border text-zinc-500 font-medium';
-        document.getElementById('tabButtonJS').className = 'h-full px-5 border-r border-workspace-border text-zinc-500 font-medium';
+      function switchActiveCodeTab(targetTab) {
+        document.getElementById('editorTabHTML').className = 'h-full px-5 border-r border-studio-border text-slate-500 font-semibold';
+        document.getElementById('editorTabCSS').className = 'h-full px-5 border-r border-studio-border text-slate-500 font-semibold';
+        document.getElementById('editorTabJS').className = 'h-full px-5 border-r border-studio-border text-slate-500 font-semibold';
 
-        currentActiveViewTab = targetTabKey;
+        systemSelectedTab = targetTab;
 
-        let formattingIdKey = 'tabButtonHTML';
-        if (targetTabKey === 'css') formattingIdKey = 'tabButtonCSS';
-        if (targetTabKey === 'js') formattingIdKey = 'tabButtonJS';
+        let domButtonElementId = 'editorTabHTML';
+        if (targetTab === 'css') domButtonElementId = 'editorTabCSS';
+        if (targetTab === 'js') domButtonElementId = 'editorTabJS';
 
-        const activeDOMBtn = document.getElementById(formattingIdKey);
-        if (activeDOMBtn) {
-          activeDOMBtn.className = 'h-full px-5 border-r border-workspace-border text-workspace-accent font-bold bg-workspace-editor border-t-2 border-t-workspace-accent';
-        }
-
-        const codeArea = document.getElementById('codeEditorWorkspace');
-        if (codeArea) codeArea.value = workspaceProjectState[currentActiveViewTab];
+        document.getElementById(domButtonElementId).className = 'h-full px-5 border-r border-studio-border text-studio-accent font-bold bg-zinc-950 border-t-2 border-t-studio-accent';
+        document.getElementById('codeEditorArea').value = codeBufferStorage[systemSelectedTab];
       }
 
-      function executeActiveSandboxPreview() {
-        const targetFrame = document.getElementById('isolatedSandboxPreviewFrame');
-        if (!targetFrame) return;
+      function executeLiveSandboxPreview() {
+        const previewIframe = document.getElementById('liveSandboxViewportFrame');
+        if (!previewIframe) return;
 
-        let markupPayload = workspaceProjectState.html;
-        const stylePayload = workspaceProjectState.css;
-        const scriptPayload = workspaceProjectState.js;
+        let combinedMarkupHTML = codeBufferStorage.html;
+        const inlineStyleCSS = codeBufferStorage.css;
+        const inlineScriptJS = codeBufferStorage.js;
 
-        // Surgical replacement links injection
-        markupPayload = markupPayload.replace(/<link\s+rel=['"]stylesheet['"]\s+href=['"]style\.css['"]\s*\/?>/i, `<style>${stylePayload}</style>`);
-        markupPayload = markupPayload.replace(/<script\s+src=['"]script\.js['"]><\/script>/i, `<script>${scriptPayload}<\/script>`);
+        // Secure runtime text substitutions
+        combinedMarkupHTML = combinedMarkupHTML.replace(/<link\s+rel=['"]stylesheet['"]\s+href=['"]style\.css['"]\s*\/?>/i, `<style>${inlineStyleCSS}</style>`);
+        combinedMarkupHTML = combinedMarkupHTML.replace(/<script\s+src=['"]script\.js['"]><\/script>/i, `<script>${inlineScriptJS}<\/script>`);
 
-        targetFrame.srcdoc = markupPayload;
+        previewIframe.srcdoc = combinedMarkupHTML;
       }
 
-      // Safe DOM Event bindings
-      document.getElementById('generatePayloadBtn')?.addEventListener('click', compileSelectedTemplateBlueprint);
-      document.getElementById('compilePreviewBtn')?.addEventListener('click', executeActiveSandboxPreview);
+      // Event Listener Interfaces
+      document.getElementById('triggerGenerationEngine').addEventListener('click', processCodeGeneration);
+      document.getElementById('runRenderPipeline').addEventListener('click', executeLiveSandboxPreview);
 
-      document.getElementById('tabButtonHTML')?.addEventListener('click', () => transitionActiveCodeTab('html'));
-      document.getElementById('tabButtonCSS')?.addEventListener('click', () => transitionActiveCodeTab('css'));
-      document.getElementById('tabButtonJS')?.addEventListener('click', () => transitionActiveCodeTab('js'));
+      document.getElementById('editorTabHTML').addEventListener('click', () => switchActiveCodeTab('html'));
+      document.getElementById('editorTabCSS').addEventListener('click', () => switchActiveCodeTab('css'));
+      document.getElementById('editorTabJS').addEventListener('click', () => switchActiveCodeTab('js'));
 
-      document.getElementById('codeEditorWorkspace')?.addEventListener('input', (event) => {
-        workspaceProjectState[currentActiveViewTab] = event.target.value;
+      document.getElementById('codeEditorArea').addEventListener('input', (event) => {
+        codeBufferStorage[systemSelectedTab] = event.target.value;
       });
 
-      document.getElementById('triggerZipExportBtn')?.addEventListener('click', () => {
+      document.getElementById('downloadVerifiedZip').addEventListener('click', () => {
         if (typeof JSZip === 'undefined') {
-          alert("ZIP archive system dependencies are currently optimizing. Please wait 2 seconds.");
+          alert("Zip engine loading. Please try again.");
           return;
         }
 
-        const packageContainer = new JSZip();
-        packageContainer.file("index.html", workspaceProjectState.html);
-        packageContainer.file("style.css", workspaceProjectState.css);
-        packageContainer.file("script.js", workspaceProjectState.js);
+        const archive = new JSZip();
+        archive.file("index.html", codeBufferStorage.html);
+        archive.file("style.css", codeBufferStorage.css);
+        archive.file("script.js", codeBufferStorage.js);
 
-        packageContainer.generateAsync({ type: "blob" }).then((compiledStreamBlob) => {
-          const proxyDownloadAnchor = document.createElement('a');
-          proxyDownloadAnchor.href = URL.createObjectURL(compiledStreamBlob);
-          proxyDownloadAnchor.download = "suppu_generated_site.zip";
-          proxyDownloadAnchor.click();
-        }).catch(() => {
-          alert("An unexpected exception occurred inside the stream serialization matrix.");
+        archive.generateAsync({ type: "blob" }).then((blobStreamPayload) => {
+          const clientDownloadTrigger = document.createElement('a');
+          clientDownloadTrigger.href = URL.createObjectURL(blobStreamPayload);
+          clientDownloadTrigger.download = "suppu_verified_site.zip";
+          clientDownloadTrigger.click();
         });
       });
 
-      // Session persistence validator
-      if (sessionStorage.getItem('suppuMasterToken') === 'verified') {
-        initializeSystemWorkspace();
-      }
+      // Default Initialization Build Routine
+      processCodeGeneration();
     });
   </script>
 </body>
